@@ -543,6 +543,13 @@ class Cursor(_Closeable):
         return self._rowcount
 
     @property
+    def arrowreader(self) -> Optional[pyarrow.RecordBatchReader]:
+        """Fetch the output schema for the given query."""
+        if self._results is not None:
+            return self._results.reader
+        return None
+
+    @property
     def rownumber(self) -> Optional[int]:
         """Get the current row number, or None if not applicable."""
         if self._results is not None:
@@ -945,6 +952,10 @@ class _RowIterator(_Closeable):
         if hasattr(self._reader, "close"):
             # Only in recent PyArrow
             self._reader.close()
+
+    @property
+    def reader(self) -> pyarrow.RecordBatchReader:
+        return self._reader
 
     @property
     def description(self) -> List[tuple]:

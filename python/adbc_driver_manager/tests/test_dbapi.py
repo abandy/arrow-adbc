@@ -330,3 +330,11 @@ def test_close_warning(sqlite):
     ):
         conn = dbapi.connect(driver="adbc_driver_sqlite")
         del conn
+
+
+@pytest.mark.sqlite
+def test_fetch_query_schema(sqlite):
+    with sqlite.cursor() as cur:
+        cur.execute("CREATE TABLE foo (a, b)")
+        cur.execute("SELECT a FROM foo")
+        assert cur.arrowreader.schema == pyarrow.schema([("a", "int64")])
